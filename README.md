@@ -12,3 +12,5 @@ SolusIO supports 1-click deployments of applications via CloudInit scripts and a
 * NextCloud
 * Cloudron.io
 * OpenVPN
+* Gitlab EE
+
