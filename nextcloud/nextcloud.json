@@ -1,7 +1,7 @@
 {
     "applications-slug": "nextcloud",
     "application-name": "NextCloud",
-    "version": "1.0",
+    "version": "15.0",
     "os": "centOs7",
     "imageURL": "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img",
     "icon": "https://raw.githubusercontent.com/nextcloud/promo/master/nextcloud-icon.png",
@@ -10,6 +10,9 @@
     "shortDescription": "",
     "supportLink": "",
     "costs": "0",
-    "outputURL": "https://{{ hostname }}"
+    "outputURL": "https://{{ hostname }}",
+    "minCPU": "1",
+    "minMemoryMB": "128",
+    "minSpaceGB": "5"
 
 }
