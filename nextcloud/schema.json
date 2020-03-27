@@ -1,0 +1,29 @@
+{
+    "title": "NextCloud",
+    "description": "Be in control of all your data",
+    "type": "object",
+    "required": [
+      "email",
+      "domain",
+      "user",
+      "pw"
+    ],
+    "properties": {
+      "email": {
+        "type": "string",
+        "title": "Email"
+      },
+      "domain": {
+        "type": "string",
+        "title": "Domain"
+      },
+       "user": {
+        "type": "string",
+        "title": "User"
+      },
+      "pw": {
+        "type": "string",
+        "title": "Password"
+      }
+    }
+  }

@@ -1,0 +1,10 @@
+#cloud-config
+runcmd:
+  - snap install nextcloud
+  - echo 'y' > /tmp/vars.txt
+  - echo {{ email }}  >> /tmp/vars.txt
+  - echo {{ domain }} >> /tmp/vars.txt
+  - echo "go to sleep"
+  - sleep 30s
+  - 'cat /tmp/vars.txt | nextcloud.enable-https lets-encrypt'
+  - sed -i '/^$AUTOCONFIG.*/a "adminlogin" => "{{ user }}",\n\n"adminpass" => "{{ pw }}",\n'  /var/snap/nextcloud/current/nextcloud/config/autoconfig.php
