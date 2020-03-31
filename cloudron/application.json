@@ -1,0 +1,18 @@
+{
+    "applications-slug": "cloudron",
+    "application-name": "CloudRon",
+    "version": "5.0",
+    "os": "ubuntu1804",
+    "imageURL": "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img",
+    "icon": "https://cloudron.io/img/logo.png",
+    "cloudinitversion": "v2",
+    "longDescription": "",
+    "shortDescription": "",
+    "supportLink": "",
+    "costs": "0",
+    "outputURL": "https://{{ hostname }}",
+    "minCPU": "1",
+    "minMemoryMB": "1024",
+    "minSpaceGB": "20"
+
+}

@@ -1,0 +1,9 @@
+#cloud-config
+runcmd:
+  - [ curl, -L, https://cloudron.io/cloudron-setup, -o, /root/setup ]
+  - chmod +x /root/setup
+  - /root/setup --provider generic
+power_state:
+  mode: reboot
+  message: Bye Bye
+  condition: True
