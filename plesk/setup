@@ -24,9 +24,14 @@ else
     echo "Initialize Plesk" 
     printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
     plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true 
+    
+    if [[ -z $ip ]]; then
+        ip=$(curl https://ipinfo.io/ip);
+    fi
+   
     # set solution type to identify servers
 	echo "set solution type to identify servers" 
-    plesk bin settings --set solution_type="netnation_wordpress"
+    plesk bin settings --set solution_type="solusIO"
     # Setting up the subscription inside plesk
 	echo "Setting up the subscription inside plesk"
     printf '{\n"status":"Configuring Plesk",\n"progress":"20"\n}' > /var/www/vhosts/default/htdocs/progress.json
@@ -46,9 +51,7 @@ else
         echo "NO subscription was created as no license was activated"
     fi
 
-    if [[ -z $ip ]]; then
-        ip=$(curl https://ipinfo.io/ip);
-    fi
+ 
    
     printf '{\n"status":"Configuring Plesk",\n"progress":"50"\n}' > /var/www/vhosts/default/htdocs/progress.json
     plesk bin poweruser --on
