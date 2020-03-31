@@ -62,6 +62,8 @@ else
     if [[ $advisor = 1 ]]; then
         plesk ext advisor --apply-recommendations
     fi
+    # Install the WordPress Toolkit
+    plesk bin extension --install wp-toolkit
 
     printf '{\n"status":"Installing & Configuring WordPress",\n"progress":"70"\n}' > /var/www/vhosts/default/htdocs/progress.json
      plesk ext wp-toolkit --install -domain-name $domain -site-title "${wp_title}" -admin-email $wp_mail -username $wp_user -password $wp_passwd -auto-updates true -plugins-auto-updates true -themes-auto-updates true
