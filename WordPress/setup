@@ -1,0 +1,82 @@
+#!/bin/bash
+echo "Lets start" 
+. /root/config.ini
+# expected variables from the sourced file located at /root/config
+# domain - domain to create subscription for 
+# rootpw - root password to be used by plesk admin
+# rootmail - root mail to be used by plesk
+# user - user used for the subscription
+# passwd - password for the above user
+# ip - IP used for the subscription
+# activation_key - Activation key for Plesk
+# advisor - If yes the server will directly apply all advisor recommendation which takes around 4 minutes
+
+FILE=/etc/plesk
+if test -f "$FILE"; then
+    echo "Nothing to do here. PLESK seems to be already insalled"
+    echo "Seems like everything was already done" 
+else 
+    printf '{\n"status":"Waiting for VM",\n"progress":"0"\n}' > /var/www/vhosts/default/htdocs/progress.json
+    while [[ $(plesk bin cloning --status) == "1" ]] ; do
+        sleep 5
+    done
+    # Initialize Plesk
+    echo "Initialize Plesk" 
+    printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
+    plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true 
+    
+    if [[ -z $ip ]]; then
+        ip=$(curl https://ipinfo.io/ip);
+    fi
+   
+    # set solution type to identify servers
+	echo "set solution type to identify servers" 
+    plesk bin settings --set solution_type="solusIO"
+    # Setting up the subscription inside plesk
+	echo "Setting up the subscription inside plesk"
+    printf '{\n"status":"Configuring Plesk",\n"progress":"20"\n}' > /var/www/vhosts/default/htdocs/progress.json
+    if [[ -n "$activation_key" ]]; then
+        plesk bin license --install $activation_key 
+        plesk bin subscription --create $domain -owner admin -service-plan "Default Domain" -login $user -passwd $passwd -ip $ip 
+        OUT=$?
+        # Check if Subscription was created without errors
+	    echo "Check if Subscription was created without errors" 
+        if [ $OUT -ne 0 ];then
+        printf '{\n"status":"Error while creating the  Subscription",\n"progress":"100"\n}' > /var/www/vhosts/default/htdocs/progress.json
+        echo
+        echo "An error occurred! The setup of Plesk failed. Please see logged lines above for error handling!"
+        exit 1
+         fi
+    else
+        echo "NO subscription was created as no license was activated"
+    fi
+
+ 
+   
+    printf '{\n"status":"Configuring Plesk",\n"progress":"50"\n}' > /var/www/vhosts/default/htdocs/progress.json
+    plesk bin poweruser --on
+    
+    
+    # Activate all recommendations
+	echo "Activate all recommendations" 
+    if [[ $advisor = "1" ]]; then
+        plesk ext advisor --apply-recommendations
+    fi
+
+    printf '{\n"status":"Installing & Configuring WordPress",\n"progress":"70"\n}' > /var/www/vhosts/default/htdocs/progress.json
+     plesk ext wp-toolkit --install -domain-name $domain -site-title "${wp_title}" -admin-email $wp_mail -username $wp_user -password $wp_passwd -auto-updates true -plugins-auto-updates true -themes-auto-updates true
+
+    printf '{\n"status":"Add Lets Encrypt certificate for Plesk",\n"progress":"50"\n}' > /var/www/vhosts/default/htdocs/progress.json
+    # Activate Lets Encrypt
+    	
+    if [[ $letsencrypt = "1" ]]; then
+        
+   
+    printf '{\n"status":"Setting up Let´s Encrypt",\n"progress":"95"\n}' > /var/www/vhosts/default/htdocs/progress.json
+    plesk bin extension --exec letsencrypt cli.php -d $domain -d "www.${domain}" -m $rootmail --letsencrypt-plesk:plesk-secure-panel  >> /var/log/letsencrypt_log
+    plesk bin extension --exec letsencrypt cli.php -d $domain -d "www.${domain}" -m $rootmail  >> /var/log/letsencrypt_log
+     fi
+    printf '{\n"status":"Everything is up and running",\n"progress":"100"\n}' > /var/www/vhosts/default/htdocs/progress.json
+    echo "Installation done"
+    touch /etc/plesk
+fi
