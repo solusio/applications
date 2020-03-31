@@ -1,0 +1,17 @@
+{
+    "applications-slug": "openvpn",
+    "application-name": "OpenVPN",
+    "version": "2.8.3",
+    "os": "ubuntu1804",
+    "imageURL": "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img",
+    "icon": "https://png2.cleanpng.com/sh/e29c85e17278b15375f18d9ba9f67c58/L0KzQYm3VcE2N5dsfZH0aYP2gLBuTf9xbZ97iNC2dnn1hMbojL1xepp7eeZuLX7ohMj2kvsuaZ9pitHyZD3mfLrsjwQua5DyRadqZnK8dYm4U8M2OJY1RqU8N0G8QIq7UcUzPmU4UacAM0K0QIO1kP5o/kisspng-openvpn-virtual-private-network-android-client-com-5afb9e813350e0.3371909415264395532102.png",
+    "cloudinitversion": "v2",
+    "longDescription": "",
+    "shortDescription": "",
+    "supportLink": "",
+    "costs": "0",
+    "minCPU": "1",
+    "minMemoryMB": "1024",
+    "minSpaceGB": "16"
+
+}

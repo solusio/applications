@@ -1,0 +1,12 @@
+#cloud-config
+runcmd:
+  - [ curl, -O, https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh, -o, ./openvpn-install.sh ]
+  - chmod +x ./openvpn-install.sh
+  - export AUTO_INSTALL=y
+  - export APPROVE_INSTALL=y
+  - export APPROVE_IP=y
+  - export MENU_OPTION='1'
+  - export CLIENT='{{ client }}'
+  - export PASS='1'
+  - ./openvpn-install.sh
+  - echo "Done, please download your profile via SFTP"
