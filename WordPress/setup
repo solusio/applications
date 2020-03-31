@@ -59,7 +59,7 @@ else
     
     # Activate all recommendations
 	echo "Activate all recommendations" 
-    if [[ $advisor = "1" ]]; then
+    if [[ $advisor = 1 ]]; then
         plesk ext advisor --apply-recommendations
     fi
 
@@ -69,7 +69,7 @@ else
     printf '{\n"status":"Add Lets Encrypt certificate for Plesk",\n"progress":"50"\n}' > /var/www/vhosts/default/htdocs/progress.json
     # Activate Lets Encrypt
     	
-    if [[ $letsencrypt = "1" ]]; then
+    if [[ $letsencrypt = 1 ]]; then
         
    
     printf '{\n"status":"Setting up Let´s Encrypt",\n"progress":"95"\n}' > /var/www/vhosts/default/htdocs/progress.json
