@@ -58,10 +58,15 @@ else
     fi
     
     printf '{\n"status":"Add Lets Encrypt certificate for Plesk",\n"progress":"50"\n}' > /var/www/vhosts/default/htdocs/progress.json
-    # Activate Lets Encrypt 
+    # Activate Lets Encrypt
+    	
+    if [[ $letsencrypt == "yes" ]]; then
+        
+   
     printf '{\n"status":"Setting up Let´s Encrypt",\n"progress":"95"\n}' > /var/www/vhosts/default/htdocs/progress.json
     plesk bin extension --exec letsencrypt cli.php -d $domain -d "www.${domain}" -m $rootmail --letsencrypt-plesk:plesk-secure-panel  >> /var/log/letsencrypt_log
     plesk bin extension --exec letsencrypt cli.php -d $domain -d "www.${domain}" -m $rootmail  >> /var/log/letsencrypt_log
+     fi
     printf '{\n"status":"Everything is up and running",\n"progress":"100"\n}' > /var/www/vhosts/default/htdocs/progress.json
     echo "Installation done"
     touch /etc/plesk
