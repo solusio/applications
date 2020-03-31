@@ -1,0 +1,25 @@
+{
+  "title": "OpenVPN + PiHole",
+  "description": "Get your OpenVPN Server in seconds and profit from the world leading adblocker running on DNS level",
+  "type": "object",
+  "required": [
+    "domain",
+    "client",
+	"passwd"
+  ],
+  "properties": {
+    "domain": {
+      "type": "string",
+      "title": "Domain"
+    },
+    "client": {
+      "type": "string",
+      "title": "Client",
+	  "default": "default"
+    },
+	"passwd":{
+	  "type": "string",
+	  "title": "Password for PiHole"
+	}
+  }
+}

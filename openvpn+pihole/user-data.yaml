@@ -1,0 +1,32 @@
+#cloud-config
+runcmd:
+  - [ curl, -O, https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh, -o, ./openvpn-install.sh ]
+  - chmod +x ./openvpn-install.sh
+  - export AUTO_INSTALL=y
+  - export APPROVE_INSTALL=y
+  - export APPROVE_IP=y
+  - export MENU_OPTION='1'
+  - export CLIENT='{{ client }}'
+  - export PASS='1'
+  - ./openvpn-install.sh
+  - echo "OpenVPN installation done. Now installing PiHole"
+  - mkdir /etc/pihole
+  - touch /etc/pihole/setupVars.conf
+  - ip=$(curl https://ipinfo.io/ip)
+  - echo "IPV4_ADDRESS=$ip/24" >> /etc/pihole/setupVars.conf
+  - echo "QUERY_LOGGIN=true" >> /etc/pihole/setupVars.conf
+  - echo "QUERY_LOGGIN=true" >> /etc/pihole/setupVars.conf
+  - echo "INSTALL_WEB=true" >> /etc/pihole/setupVars.conf
+  - echo "DNSMASQ_LISTENING=single" >> /etc/pihole/setupVars.conf
+  - echo "PIHOLE_DNS_1=8.8.8.8" >> /etc/pihole/setupVars.conf
+  - echo "PIHOLE_DNS_2=8.8.4.4" >> /etc/pihole/setupVars.conf
+  - echo "DNS_FQDN_REQUIRED=true" >> /etc/pihole/setupVars.conf
+  - echo "DNS__BOGUS_PRIV=true" >> /etc/pihole/setupVars.conf
+  - echo "DNSSEC=true" >> /etc/pihole/setupVars.conf
+  - echo "TEMPERATUREUNIT=C" >> /etc/pihole/setupVars.conf
+  - echo "WEBUIBOXEDLAYOUT=traditional" >> /etc/pihole/setupVars.conf
+  - echo "API_QUERY_LOG_SHOW=all" >> /etc/pihole/setupVars.conf
+  - echo "API_PRIVACY_MODE=false" >> /etc/pihole/setupVars.conf
+  - curl -L https://install.pi-hole.net | bash /dev/stdin --unattended 
+  - echo "Installation Done. Now setting password"
+  - pihole -a -p {{ passwd }}
