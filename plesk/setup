@@ -32,21 +32,24 @@ else
     printf '{\n"status":"Configuring Plesk",\n"progress":"20"\n}' > /var/www/vhosts/default/htdocs/progress.json
     if [[ -n "$activation_key" ]]; then
         plesk bin license --install $activation_key 
+        plesk bin subscription --create $domain -owner admin -service-plan "Default Domain" -login $user -passwd $passwd -ip $ip 
+        OUT=$?
+        # Check if Subscription was created without errors
+	    echo "Check if Subscription was created without errors" 
+        if [ $OUT -ne 0 ];then
+        printf '{\n"status":"Error while creating the  Subscription",\n"progress":"100"\n}' > /var/www/vhosts/default/htdocs/progress.json
+        echo
+        echo "An error occurred! The setup of Plesk failed. Please see logged lines above for error handling!"
+        exit 1
+         fi
+    else
+        echo "NO subscription was created as no license was activated"
     fi
 
     if [[ -z $ip ]]; then
         ip=$(curl https://ipinfo.io/ip);
     fi
-    plesk bin subscription --create $domain -owner admin -service-plan "Default Domain" -login $user -passwd $passwd -ip $ip 
-    OUT=$?
-    # Check if Subscription was created without errors
-	echo "Check if Subscription was created without errors" 
-    if [ $OUT -ne 0 ];then
-        printf '{\n"status":"Error while creating the  Subscription",\n"progress":"100"\n}' > /var/www/vhosts/default/htdocs/progress.json
-        echo
-        echo "An error occurred! The setup of Plesk failed. Please see logged lines above for error handling!"
-        exit 1
-    fi
+   
     printf '{\n"status":"Configuring Plesk",\n"progress":"50"\n}' > /var/www/vhosts/default/htdocs/progress.json
     plesk bin poweruser --on
     
