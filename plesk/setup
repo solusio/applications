@@ -21,21 +21,19 @@ else
         sleep 5
     done
     # Initialize Plesk
-    echo "Initialize Plesk" 
-    printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
-    plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true 
-    
-    if [[ -z $ip ]]; then
-        ip=$(curl https://ipinfo.io/ip);
-    fi
    
-    # set solution type to identify servers
-	echo "set solution type to identify servers" 
-    plesk bin settings --set solution_type="solusIO"
+     if [[ -z $ip ]]; then
+            ip=$(curl https://ipinfo.io/ip);
+    fi
     # Setting up the subscription inside plesk
 	echo "Setting up the subscription inside plesk"
     printf '{\n"status":"Configuring Plesk",\n"progress":"20"\n}' > /var/www/vhosts/default/htdocs/progress.json
     if [[ -n "$activation_key" ]]; then
+         echo "Initialize Plesk" 
+         printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
+         plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true 
+    
+   
         plesk bin license --install $activation_key 
         plesk bin subscription --create $domain -owner admin -service-plan "Default Domain" -login $user -passwd $passwd -ip $ip 
         OUT=$?
@@ -48,9 +46,23 @@ else
         exit 1
          fi
     else
-        echo "NO subscription was created as no license was activated"
+        echo "Initialize Plesk" 
+         printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
+         plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true  -trial_license true
+        plesk bin subscription --create $domain -owner admin -service-plan "Default Domain" -login $user -passwd $passwd -ip $ip 
+        OUT=$?
+        # Check if Subscription was created without errors
+	    echo "Check if Subscription was created without errors" 
+        if [ $OUT -ne 0 ];then
+        printf '{\n"status":"Error while creating the  Subscription",\n"progress":"100"\n}' > /var/www/vhosts/default/htdocs/progress.json
+        echo
+        echo "An error occurred! The setup of Plesk failed. Please see logged lines above for error handling!"
+        exit 1
+         fi
     fi
-
+    # set solution type to identify servers
+	echo "set solution type to identify servers" 
+    plesk bin settings --set solution_type="solusIO"
  
    
     printf '{\n"status":"Configuring Plesk",\n"progress":"50"\n}' > /var/www/vhosts/default/htdocs/progress.json
@@ -59,14 +71,16 @@ else
     
     # Activate all recommendations
 	echo "Activate all recommendations" 
-    if [[ $advisor == "yes" ]]; then
+    if [[ $advisor = 1 ]]; then
         plesk ext advisor --apply-recommendations
     fi
+    # Install the WordPress Toolkit
+    plesk bin extension --install wp-toolkit
     
     printf '{\n"status":"Add Lets Encrypt certificate for Plesk",\n"progress":"50"\n}' > /var/www/vhosts/default/htdocs/progress.json
     # Activate Lets Encrypt
     	
-    if [[ $letsencrypt == "yes" ]]; then
+    if [[ $letsencrypt = "1" ]]; then
         
    
     printf '{\n"status":"Setting up Let´s Encrypt",\n"progress":"95"\n}' > /var/www/vhosts/default/htdocs/progress.json
