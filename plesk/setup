@@ -35,27 +35,25 @@ else
     
    
         plesk bin license --install $activation_key 
-        plesk bin subscription --create $domain -owner admin -service-plan "Default Domain" -login $user -passwd $passwd -ip $ip 
+        plesk bin subscription --create $domain -owner admin -service-plan "Unlimited" -login $user -passwd $passwd -ip $ip 
         OUT=$?
         # Check if Subscription was created without errors
 	    echo "Check if Subscription was created without errors" 
         if [ $OUT -ne 0 ];then
         printf '{\n"status":"Error while creating the  Subscription",\n"progress":"100"\n}' > /var/www/vhosts/default/htdocs/progress.json
-        echo
         echo "An error occurred! The setup of Plesk failed. Please see logged lines above for error handling!"
         exit 1
          fi
     else
         echo "Initialize Plesk" 
-         printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
-         plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true  -trial_license true
-        plesk bin subscription --create $domain -owner admin -service-plan "Default Domain" -login $user -passwd $passwd -ip $ip 
+        printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
+        plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true  -trial_license true
+        plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login $user -passwd $passwd -ip $ip 
         OUT=$?
         # Check if Subscription was created without errors
 	    echo "Check if Subscription was created without errors" 
         if [ $OUT -ne 0 ];then
         printf '{\n"status":"Error while creating the  Subscription",\n"progress":"100"\n}' > /var/www/vhosts/default/htdocs/progress.json
-        echo
         echo "An error occurred! The setup of Plesk failed. Please see logged lines above for error handling!"
         exit 1
          fi
@@ -82,10 +80,10 @@ else
     	
     if [[ $letsencrypt = "1" ]]; then
         
-   
+    plesk bin extension -g letsencrypt
     printf '{\n"status":"Setting up Let´s Encrypt",\n"progress":"95"\n}' > /var/www/vhosts/default/htdocs/progress.json
-    plesk bin extension --exec letsencrypt cli.php -d $domain -d "www.${domain}" -m $rootmail --letsencrypt-plesk:plesk-secure-panel  >> /var/log/letsencrypt_log
-    plesk bin extension --exec letsencrypt cli.php -d $domain -d "www.${domain}" -m $rootmail  >> /var/log/letsencrypt_log
+    plesk bin extension --exec letsencrypt cli.php -d $domain -d "www.${domain}" -m $rootmail --letsencrypt-plesk:plesk-secure-panel  
+    plesk bin extension --exec letsencrypt cli.php -d $domain -d "www.${domain}" -m $rootmail  
      fi
     printf '{\n"status":"Everything is up and running",\n"progress":"100"\n}' > /var/www/vhosts/default/htdocs/progress.json
     echo "Installation done"

@@ -25,8 +25,7 @@ else
      if [[ -z $ip ]]; then
             ip=$(curl https://ipinfo.io/ip);
     fi
-    # Setting up the subscription inside plesk
-	echo "Setting up the subscription inside plesk"
+
     printf '{\n"status":"Configuring Plesk",\n"progress":"20"\n}' > /var/www/vhosts/default/htdocs/progress.json
     if [[ -n "$activation_key" ]]; then
          echo "Initialize Plesk" 
@@ -35,7 +34,10 @@ else
     
    
         plesk bin license --install $activation_key 
-        plesk bin subscription --create $domain -owner admin -service-plan "Default Domain" -login $user -passwd $passwd -ip $ip 
+
+        # Setting up the subscription inside plesk
+	    echo "Setting up the subscription inside plesk"
+        plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login $user -passwd $passwd -ip $ip 
         OUT=$?
         # Check if Subscription was created without errors
 	    echo "Check if Subscription was created without errors" 
@@ -49,7 +51,10 @@ else
         echo "Initialize Plesk" 
          printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
          plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true  -trial_license true
-        plesk bin subscription --create $domain -owner admin -service-plan "Default Domain" -login $user -passwd $passwd -ip $ip 
+
+        # Setting up the subscription inside plesk
+	    echo "Setting up the subscription inside plesk"
+        plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login $user -passwd $passwd -ip $ip 
         OUT=$?
         # Check if Subscription was created without errors
 	    echo "Check if Subscription was created without errors" 
@@ -62,7 +67,7 @@ else
     fi
     # set solution type to identify servers
 	echo "set solution type to identify servers" 
-    plesk bin settings --set solution_type="solusIO"
+    plesk bin settings --set solution_type="WPOnsolusIO"
  
    
     printf '{\n"status":"Configuring Plesk",\n"progress":"50"\n}' > /var/www/vhosts/default/htdocs/progress.json
@@ -85,7 +90,7 @@ else
     	
     if [[ $letsencrypt = 1 ]]; then
         
-   
+    plesk bin extension -g letsencrypt
     printf '{\n"status":"Setting up Let´s Encrypt",\n"progress":"95"\n}' > /var/www/vhosts/default/htdocs/progress.json
     plesk bin extension --exec letsencrypt cli.php -d $domain -d "www.${domain}" -m $rootmail --letsencrypt-plesk:plesk-secure-panel  >> /var/log/letsencrypt_log
     plesk bin extension --exec letsencrypt cli.php -d $domain -d "www.${domain}" -m $rootmail  >> /var/log/letsencrypt_log
