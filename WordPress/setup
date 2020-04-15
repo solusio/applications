@@ -92,8 +92,8 @@ else
         
     plesk bin extension -g letsencrypt
     printf '{\n"status":"Setting up Let´s Encrypt",\n"progress":"95"\n}' > /var/www/vhosts/default/htdocs/progress.json
-    plesk bin extension --exec letsencrypt cli.php -d $domain -d "www.${domain}" -m $rootmail --letsencrypt-plesk:plesk-secure-panel  >> /var/log/letsencrypt_log
-    plesk bin extension --exec letsencrypt cli.php -d $domain -d "www.${domain}" -m $rootmail  >> /var/log/letsencrypt_log
+    plesk bin extension --exec letsencrypt cli.php -d $domain -m $rootmail --letsencrypt-plesk:plesk-secure-panel 
+    plesk bin extension --exec letsencrypt cli.php -d $domain -m $rootmail  
      fi
     printf '{\n"status":"Everything is up and running",\n"progress":"100"\n}' > /var/www/vhosts/default/htdocs/progress.json
     echo "Installation done"

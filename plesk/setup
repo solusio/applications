@@ -25,9 +25,6 @@ else
      if [[ -z $ip ]]; then
             ip=$(curl https://ipinfo.io/ip);
     fi
-    # Setting up the subscription inside plesk
-	echo "Setting up the subscription inside plesk"
-    printf '{\n"status":"Configuring Plesk",\n"progress":"20"\n}' > /var/www/vhosts/default/htdocs/progress.json
     if [[ -n "$activation_key" ]]; then
          echo "Initialize Plesk" 
          printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
@@ -35,7 +32,14 @@ else
     
    
         plesk bin license --install $activation_key 
+<<<<<<< HEAD
         plesk bin subscription --create $domain -owner admin -service-plan "Unlimited" -login $user -passwd $passwd -ip $ip 
+=======
+
+        # Setting up the subscription inside plesk
+	    echo "Setting up the subscription inside plesk"
+        plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login $user -passwd $passwd -ip $ip 
+>>>>>>> 111041d9a28ca0d0b9ade2f6d7f4fdf68238d6a5
         OUT=$?
         # Check if Subscription was created without errors
 	    echo "Check if Subscription was created without errors" 
@@ -46,8 +50,16 @@ else
          fi
     else
         echo "Initialize Plesk" 
+<<<<<<< HEAD
         printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
         plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true  -trial_license true
+=======
+         printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
+         plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true  -trial_license true
+
+        # Setting up the subscription inside plesk
+	    echo "Setting up the subscription inside plesk"
+>>>>>>> 111041d9a28ca0d0b9ade2f6d7f4fdf68238d6a5
         plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login $user -passwd $passwd -ip $ip 
         OUT=$?
         # Check if Subscription was created without errors
