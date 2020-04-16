@@ -68,18 +68,14 @@ else
     fi
     # set solution type to identify servers
 	echo "set solution type to identify servers" 
-    plesk bin settings --set solution_type="WPOnsolusIO"
+    plesk bin settings --set solution_type="WPOnSolusIO"
  
    
     printf '{\n"status":"Configuring Plesk",\n"progress":"50"\n}' > /var/www/vhosts/default/htdocs/progress.json
     plesk bin poweruser --on
     
     
-    # Activate all recommendations
-	echo "Activate all recommendations" 
-    if [[ $advisor = 1 ]]; then
-        plesk ext advisor --apply-recommendations
-    fi
+  
     # Install the WordPress Toolkit
     plesk bin extension --install wp-toolkit
 
@@ -89,6 +85,11 @@ else
     # Activate Lets 
     printf '{\n"status":"Setting up Let´s Encrypt",\n"progress":"95"\n}' > /var/www/vhosts/default/htdocs/progress.json
     plesk bin extension --exec letsencrypt cli.php -d $domain -m $rootmail  
+
+     # Activate all recommendations
+	echo "Activate all recommendations" 
+    plesk ext advisor --apply-recommendations
+  
     
     printf '{\n"status":"Everything is up and running",\n"progress":"100"\n}' > /var/www/vhosts/default/htdocs/progress.json
     echo "Installation done"
