@@ -1,0 +1,74 @@
+#cloud-config
+write_files:
+  - path: /var/lib/cloud/instance/scripts/{{ domain }}
+    permissions: '0755'
+    content: |
+      server {
+       listen 80;
+        listen [::]:80;
+
+        root /var/www/{{ domain }}/html;
+        index index.php index.html index.htm index.nginx-debian.html;
+
+        server_name {{ domain }} www.{{ domain }};
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+         location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php-fpm.sock;
+        }
+
+        location ~ /\.ht {
+        deny all;
+        }
+      }
+  - path: /var/lib/cloud/instance/scripts/mariadb.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      export DEBIAN_FRONTEND="noninteractive"
+      export PASSWORD="{{ passwd }}"
+
+      debconf-set-selections <<< "mariadb-server mysql-server/root_password password $PASSWORD"
+      debconf-set-selections <<< "mariadb-server mysql-server/root_password_again password $PASSWORD" 
+      apt-get install software-properties-common
+      apt update
+      apt install -y mariadb-server
+  - owner: root:root
+    path: /etc/cron.d/your_cronjob
+    content: 12 0 2 * * root certbot certonly -n -d {{ domain }} -d {{ domain }}
+runcmd:
+  - apt update
+  - DEBIAN_FRONTEND=noninteractive 
+  - apt -yq upgrade
+  - ufw enable
+  - ufw allow 22
+  - ufw allow 3306
+  - echo "PORTS ARE OPEN"
+  - apt install -y zsh htop
+  - apt install -y nginx certbot python-certbot-nginx php-fpm php-mysql
+  - echo "INSTALLATION DONE"
+  - ufw allow 'Nginx FULL'
+  - echo "NGINX REACHABLE"
+  - adduser --system --no-create-home --disabled-login --disabled-password nginx
+  - mkdir -p /var/www/{{ domain }}/html
+  - chown -R nginx:nginx /var/www/{{ domain }}/html
+  - chmod -R 755 /var/www/{{ domain }}
+  - cp /var/lib/cloud/instance/scripts/{{ domain }} /etc/nginx/sites-available/{{ domain }}
+  - ln -s /etc/nginx/sites-available/{{ domain }} /etc/nginx/sites-enabled/
+  - echo "RESTARTING NGINX"
+  - systemctl restart nginx
+  - phpp=$(ls /etc/php/ | tr -d '\r')
+  - echo "cgi.fix_pathinfo=0" >> /etc/php/$phpp/fpm/php.ini
+  - systemctl restart php$phpp-fpm
+  - echo "<?php phpinfo();" > /var/www/{{ domain }}/html/info.php
+  - phpv=$(ls /run/php/php7.*-fpm.sock)
+  - sed -i 's,/run/php/php-fpm.sock,'"$phpv"',' "/etc/nginx/sites-available/{{ domain }}"
+  - systemctl restart nginx
+  - chmod +x /var/lib/cloud/instance/scripts/mariadb.sh
+  - /var/lib/cloud/instance/scripts/mariadb.sh
+  - sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
+  - service mysql restart
+  - certbot --nginx --agree-tos --register-unsafely-without-email -d {{ domain }} -d www.{{ domain }}

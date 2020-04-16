@@ -1,0 +1,19 @@
+{
+    "applications-slug": "mariadb",
+    "application-name": "MariaDB",
+    "version": "10.4",
+    "os": "ubuntu1804",
+    "imageURL": "",
+    "login-type": "HTML",
+    "login-link": "assets/login.html",
+    "icon": "mariadb",
+    "cloudinitversion": "v2",
+    "longDescription": "",
+    "shortDescription": "",
+    "supportLink": "",
+    "costs": "0",
+    "minCPU": "1",
+    "minMemoryMB": "512",
+    "minSpaceGB": "20"
+
+}

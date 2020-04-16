@@ -1,0 +1,26 @@
+#cloud-config
+write_files:
+  - path: /var/lib/cloud/instance/scripts/mariadb.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      export DEBIAN_FRONTEND="noninteractive"
+      export PASSWORD="{{ passwd }}"
+
+      debconf-set-selections <<< "mariadb-server mysql-server/root_password password $PASSWORD"
+      debconf-set-selections <<< "mariadb-server mysql-server/root_password_again password $PASSWORD" 
+      apt-get install software-properties-common
+      apt update
+      apt install -y mariadb-server
+
+runcmd:
+  - apt update
+  - apt -y upgrade
+  - ufw enable
+  - ufw allow 22
+  - ufw allow 3306
+  - chmod +x /var/lib/cloud/instance/scripts/mariadb.sh
+  - /var/lib/cloud/instance/scripts/mariadb.sh
+  - sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
+  - mysql -uroot -p -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root" AND `Host`="localhost"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
+  - service mysql restart

@@ -1,0 +1,20 @@
+{
+  "title": "LEMP STACK",
+  "description": "Our Stack: L => Ubuntu 18.04 - E => nginx - M => MariaDB - P => PHP",
+  "type": "object",
+  "required": [
+    "domain",
+    "passwd"
+  ],
+  "properties": {
+    "domain": {
+      "type": "string",
+      "title": "Domainname",
+      "default": ".crixu.me"
+    },
+    "passwd": {
+      "type": "string",
+      "title": "Password"
+    }
+  }
+}

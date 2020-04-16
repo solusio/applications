@@ -1,0 +1,18 @@
+{
+    "applications-slug": "lemp",
+    "application-name": "LEMP Stack",
+    "version": "1",
+    "os": "ubuntu1804",
+    "imageURL": "",
+    "login-type": "none",
+    "icon": "nginx",
+    "cloudinitversion": "v2",
+    "longDescription": "",
+    "shortDescription": "",
+    "supportLink": "",
+    "costs": "0",
+    "minCPU": "1",
+    "minMemoryMB": "512",
+    "minSpaceGB": "20"
+
+}
