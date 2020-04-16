@@ -1,6 +1,6 @@
 {
-    "applications-slug": "lemp",
-    "application-name": "LEMP Stack",
+    "applications-slug": "nginx",
+    "application-name": "NGINX",
     "version": "1",
     "os": "ubuntu1804",
     "imageURL": "",

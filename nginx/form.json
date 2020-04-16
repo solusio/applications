@@ -1,6 +1,6 @@
 {
-  "title": "LEMP STACK",
-  "description": "Our Stack: L => Ubuntu 18.04 - E => nginx - M => MariaDB - P => PHP",
+  "title": "NGINX",
+  "description": "NGINX is a free, open-source, high-performance HTTP server and reverse proxy, as well as an IMAP/POP3 proxy server",
   "type": "object",
   "required": [
     "domain",
