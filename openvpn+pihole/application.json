@@ -1,6 +1,6 @@
 {
     "applications-slug": "openvpn+pihole",
-    "application-name": "OpenVPN & PiHole",
+    "application-name": "OpenVPN & Pi-hole",
     "version": "2.8.3 & 4.4",
     "os": "ubuntu1804",
     "login-type": "HTML",
