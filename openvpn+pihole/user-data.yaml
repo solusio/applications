@@ -1,4 +1,34 @@
 #cloud-config
+write_files:
+  - path: /root/firewall.sh
+    permissions: '0755'
+    content: |
+        #!/bin/bash
+        iptables -I INPUT -i tun0 -j ACCEPT
+        iptables -A INPUT -i tun0 -p tcp --destination-port 53 -j ACCEPT
+        iptables -A INPUT -i tun0 -p udp --destination-port 53 -j ACCEPT
+        iptables -A INPUT -i tun0 -p tcp --destination-port 80 -j ACCEPT
+        iptables -A INPUT -p tcp --destination-port 22 -j ACCEPT
+        iptables -A INPUT -p tcp --destination-port 1194 -j ACCEPT
+        iptables -A INPUT -p udp --destination-port 1194 -j ACCEPT
+        iptables -I INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+        iptables -I INPUT -i lo -j ACCEPT
+        iptables -P INPUT DROP
+        iptables -A INPUT -p udp --dport 80 -j REJECT --reject-with icmp-port-unreachable
+        iptables -A INPUT -p tcp --dport 443 -j REJECT --reject-with tcp-reset
+        iptables -A INPUT -p udp --dport 443 -j REJECT --reject-with icmp-port-unreachable
+        ip6tables -A INPUT -i tun0 -p tcp --destination-port 53 -j ACCEPT
+        ip6tables -A INPUT -i tun0 -p udp --destination-port 53 -j ACCEPT
+        ip6tables -A INPUT -i tun0 -p tcp --destination-port 80 -j ACCEPT
+        ip6tables -A INPUT -p tcp --destination-port 22 -j ACCEPT
+        ip6tables -A INPUT -p tcp --destination-port 1194 -j ACCEPT
+        ip6tables -A INPUT -p udp --destination-port 1194 -j ACCEPT
+        ip6tables -I INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+        ip6tables -I INPUT -i lo -j ACCEPT
+        ip6tables -A INPUT -p udp --dport 80 -j REJECT --reject-with icmp6-port-unreachable
+        ip6tables -A INPUT -p tcp --dport 443 -j REJECT --reject-with tcp-reset
+        ip6tables -A INPUT -p udp --dport 443 -j REJECT --reject-with icmp6-port-unreachable
+        ip6tables -P INPUT DROP
 runcmd:
   - [ curl, -O, https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh, -o, ./openvpn-install.sh ]
   - chmod +x ./openvpn-install.sh
@@ -12,8 +42,7 @@ runcmd:
   - echo "OpenVPN installation done. Now installing PiHole"
   - mkdir /etc/pihole
   - touch /etc/pihole/setupVars.conf
-  - ip=$(curl https://ipinfo.io/ip)
-  - echo "IPV4_ADDRESS=$ip/24" >> /etc/pihole/setupVars.conf
+  - echo "IPV4_ADDRESS={{ ip }}/24" >> /etc/pihole/setupVars.conf
   - echo "QUERY_LOGGIN=true" >> /etc/pihole/setupVars.conf
   - echo "QUERY_LOGGIN=true" >> /etc/pihole/setupVars.conf
   - echo "INSTALL_WEB=true" >> /etc/pihole/setupVars.conf
@@ -30,3 +59,4 @@ runcmd:
   - curl -L https://install.pi-hole.net | bash /dev/stdin --unattended 
   - echo "Installation Done. Now setting password"
   - pihole -a -p {{ passwd }}
+  - /root/firewall.sh
