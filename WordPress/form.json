@@ -1,10 +1,11 @@
 {
-  "title": "Plesk",
-  "description": "Next-Level server management platform",
+  "title": "WordPress on Plesk",
+  "description": "Harvest the power of the Plesk WordPress Toolkit. This application comes with a pre-installed WordPress and Plesk instance.",
   "type": "object",
   "required": [
     "domain",
     "user",
+	"rootmail",
     "passwd",
     "wpuser",
     "wpusermail",
@@ -19,12 +20,12 @@
     },
     "domain": {
       "type": "string",
-      "title": "Hostname"
+      "title": "Domain & Hostname"
     },
     "user": {
       "type": "string",
       "title": "Username",
-      "default": "ElvisPlesky"
+      "default": " "
     },
     "rootmail": {
       "type": "string",
@@ -34,37 +35,8 @@
     "passwd": {
       "type": "string",
       "title": "Password",
-      "minLenght": 5
-    },
-    "advisor": {
-      "title": "Apply all advisor recommendations",
-      "type": "boolean",
-      "default": true,
-      "oneOf": [
-        {
-          "title": "Yes",
-          "const": true
-        },
-        {
-          "title": "No",
-          "const": false
-        }
-      ]
-    },
-    "letsencrypt": {
-      "title": "Enable SSL with Let's Encrypt",
-      "type": "boolean",
-      "default": true,
-      "oneOf": [
-        {
-          "title": "Yes",
-          "const": true
-        },
-        {
-          "title": "No",
-          "const": false
-        }
-      ]
+      "minLenght": 8,
+	  "help": "At least 1 capital letter, 1 lowercase letter, 2 digits and 2 special chars."
     },
     "wpuser": {
       "type": "string",
@@ -82,8 +54,5 @@
       "type": "string",
       "title": "Title for your Wordpress Website"
     }
-  },  "toggleMask": {
-      "title": "Apply color mask",
-      "$ref": "#/definitions/Toggle"
-    }
+  }
 }
