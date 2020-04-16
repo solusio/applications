@@ -3,6 +3,8 @@
     "application-name": "OpenVPN & PiHole",
     "version": "2.8.3 & 4.4",
     "os": "ubuntu1804",
+    "login-type": "HTML",
+    "login-link": "assets/login.html",
     "imageURL": "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img",
     "icon": "https://i2.wp.com/pi-hole.net/wp-content/uploads/2016/12/cropped-Vortex-2.png?w=250&ssl=1",
     "cloudinitversion": "v2",

@@ -1,0 +1,19 @@
+{
+    "applications-slug": "plesk",
+    "application-name": "Plesk",
+    "version": "18.0",
+    "os": "centOS7",
+    "imageURL": "",
+    "login-type": "JS",
+    "login-link": "assets/login.js",
+    "icon": "plesk",
+    "cloudinitversion": "v2",
+    "longDescription": "",
+    "shortDescription": "",
+    "supportLink": "",
+    "costs": "0",
+    "minCPU": "1",
+    "minMemoryMB": "512",
+    "minSpaceGB": "20"
+
+}

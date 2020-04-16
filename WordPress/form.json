@@ -1,0 +1,89 @@
+{
+  "title": "Plesk",
+  "description": "Next-Level server management platform",
+  "type": "object",
+  "required": [
+    "domain",
+    "user",
+    "passwd",
+    "wpuser",
+    "wpusermail",
+    "wppasswd",
+    "wptitle" 
+  ],
+  "properties": {
+      "license": {
+      "title": "Plesk Activation Key (Leave blank if not available)",
+      "type": "string",
+  "default": " "
+    },
+    "domain": {
+      "type": "string",
+      "title": "Hostname"
+    },
+    "user": {
+      "type": "string",
+      "title": "Username",
+      "default": "ElvisPlesky"
+    },
+    "rootmail": {
+      "type": "string",
+      "format": "email",
+      "title": "Administrators Email"
+    },
+    "passwd": {
+      "type": "string",
+      "title": "Password",
+      "minLenght": 5
+    },
+    "advisor": {
+      "title": "Apply all advisor recommendations",
+      "type": "boolean",
+      "default": true,
+      "oneOf": [
+        {
+          "title": "Yes",
+          "const": true
+        },
+        {
+          "title": "No",
+          "const": false
+        }
+      ]
+    },
+    "letsencrypt": {
+      "title": "Enable SSL with Let's Encrypt",
+      "type": "boolean",
+      "default": true,
+      "oneOf": [
+        {
+          "title": "Yes",
+          "const": true
+        },
+        {
+          "title": "No",
+          "const": false
+        }
+      ]
+    },
+    "wpuser": {
+      "type": "string",
+      "title": "WordPress Username"
+    },
+    "wpusermail": {
+      "type": "string",
+      "title": "WordPress User Email"
+    },
+    "wppasswd": {
+      "type": "string",
+      "title": "WordPress Password"
+    },
+    "wptitle": {
+      "type": "string",
+      "title": "Title for your Wordpress Website"
+    }
+  },  "toggleMask": {
+      "title": "Apply color mask",
+      "$ref": "#/definitions/Toggle"
+    }
+}

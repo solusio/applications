@@ -1,0 +1,13 @@
+<h3>OpenVPN + PiHole</h3>
+
+<ol>
+	<li>Connect to your server e.g.: sftp root@{{ ip }}</li>
+	<li>Download your OpenVPN profile: {{ profile }}.ovpn</li>
+	<li>Install the profile in your local VPN client</li>
+	<li>Establish a VPN connection</li>
+	<li>Access <a href="https://{{ hostname }}/admin" target="_blank">{{ hostname }}/admin</a> with your selected Password
+		<ul><li>Initial selected Password: <b>{{ passwd }}</b></li></ul>
+	</li>
+</ol>
+
+<b>Note:</b>PiHole and the PiHole Administration area are only accessible with an established VPN connection
