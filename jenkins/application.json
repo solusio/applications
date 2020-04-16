@@ -1,19 +1,19 @@
 {
-    "applications-slug": "plesk",
-    "application-name": "Plesk",
-    "version": "18.0",
-    "os": "centOS7",
-    "imageURL": "http://images.prod.solus.io/solus-io-centos-plesk-18.0.24.qcow2",
-    "login-type": "JS",
-    "login-link": "assets/login.js",
-    "icon": "plesk",
+    "applications-slug": "jenkins",
+    "application-name": "Jenkins",
+    "version": "2.222.1",
+    "os": "ubuntu1804",
+    "imageURL": "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img",
+    "login-type": "URL",
+    "login-link": "http://{{hostname}}:8080/",
+    "icon": "jenkins",
     "cloudinitversion": "v2",
     "longDescription": "",
     "shortDescription": "",
     "supportLink": "",
     "costs": "0",
     "minCPU": "1",
-    "minMemoryMB": "512",
+    "minMemoryMB": "256",
     "minSpaceGB": "20"
 
 }
