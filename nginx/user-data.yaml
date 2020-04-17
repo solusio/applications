@@ -36,6 +36,18 @@ write_files:
       apt-get install -y software-properties-common
       apt update
       apt install -yq mariadb-server
+  - path: /var/lib/cloud/instance/scripts/mariadbvars
+    permissions: '0755'
+    content: |
+      
+      Y
+      {{ passwd }}
+      {{ passwd }}
+      Y
+      n
+      Y
+      Y
+
   - owner: root:root
     path: /etc/cron.d/your_cronjob
     content: 12 0 2 * * root certbot certonly -n -d {{ domain }} -d {{ domain }}
@@ -65,7 +77,9 @@ runcmd:
   - systemctl restart nginx
   - chmod +x /var/lib/cloud/instance/scripts/mariadb.sh
   - /var/lib/cloud/instance/scripts/mariadb.sh
+  - 'cat /var/lib/cloud/instance/scripts/mariadbvars | mysql_secure_installation'
   - sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/mariadb.conf.d/50-server.cnf
-  - mysql -uroot -p{{passwd}} -e 'USE mysql; UPDATE `user` SET `Host`="%", `Password`="{{passwd}}" WHERE `User`="root"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
+  - mysql -uroot -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; GRANT ALL PRIVILEGES ON *.* TO "root"@"%"  IDENTIFIED BY "{{ passwd }}" WITH GRANT OPTION; FLUSH PRIVILEGES;'
   - service mysql restart
   - certbot --nginx --agree-tos --register-unsafely-without-email -d {{ domain }} -d www.{{ domain }}
+  - rm -r /var/lib/cloud/instance/scripts/*
