@@ -11,11 +11,12 @@ write_files:
       debconf-set-selections <<< "mariadb-server mysql-server/root_password_again password $PASSWORD" 
       apt-get install software-properties-common
       apt update
-      apt install -y mariadb-server
+      apt install -yq mariadb-server
 
 runcmd:
   - apt update
-  - apt -y upgrade
+  - export DEBIAN_FRONTEND=noninteractive 
+  - apt -yq upgrade
   - ufw enable
   - ufw allow 22
   - ufw allow 3306

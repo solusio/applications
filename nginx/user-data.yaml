@@ -35,30 +35,26 @@ write_files:
       debconf-set-selections <<< "mariadb-server mysql-server/root_password_again password $PASSWORD" 
       apt-get install software-properties-common
       apt update
-      apt install -y mariadb-server
+      apt install -yq mariadb-server
   - owner: root:root
     path: /etc/cron.d/your_cronjob
     content: 12 0 2 * * root certbot certonly -n -d {{ domain }} -d {{ domain }}
 runcmd:
   - apt update
-  - DEBIAN_FRONTEND=noninteractive 
+  - export DEBIAN_FRONTEND=noninteractive 
   - apt -yq upgrade
   - ufw enable
   - ufw allow 22
   - ufw allow 3306
-  - echo "PORTS ARE OPEN"
-  - apt install -y zsh htop
-  - apt install -y nginx certbot python-certbot-nginx php-fpm php-mysql
-  - echo "INSTALLATION DONE"
+  - apt install -yq zsh htop
+  - apt install -yq nginx certbot python-certbot-nginx php-fpm php-mysql
   - ufw allow 'Nginx FULL'
-  - echo "NGINX REACHABLE"
   - adduser --system --no-create-home --disabled-login --disabled-password nginx
   - mkdir -p /var/www/{{ domain }}/html
   - chown -R nginx:nginx /var/www/{{ domain }}/html
   - chmod -R 755 /var/www/{{ domain }}
   - cp /var/lib/cloud/instance/scripts/{{ domain }} /etc/nginx/sites-available/{{ domain }}
   - ln -s /etc/nginx/sites-available/{{ domain }} /etc/nginx/sites-enabled/
-  - echo "RESTARTING NGINX"
   - systemctl restart nginx
   - phpp=$(ls /etc/php/ | tr -d '\r')
   - echo "cgi.fix_pathinfo=0" >> /etc/php/$phpp/fpm/php.ini
