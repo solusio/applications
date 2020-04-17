@@ -33,7 +33,7 @@ write_files:
 
       debconf-set-selections <<< "mariadb-server mysql-server/root_password password $PASSWORD"
       debconf-set-selections <<< "mariadb-server mysql-server/root_password_again password $PASSWORD" 
-      apt-get install software-properties-common
+      apt-get install -y software-properties-common
       apt update
       apt install -yq mariadb-server
   - owner: root:root
@@ -65,6 +65,7 @@ runcmd:
   - systemctl restart nginx
   - chmod +x /var/lib/cloud/instance/scripts/mariadb.sh
   - /var/lib/cloud/instance/scripts/mariadb.sh
-  - sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
+  - sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/mariadb.conf.d/50-server.cnf
+  - mysql -uroot -p{{passwd}} -e 'USE mysql; UPDATE `user` SET `Host`="%", `Password`="{{passwd}}" WHERE `User`="root"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
   - service mysql restart
   - certbot --nginx --agree-tos --register-unsafely-without-email -d {{ domain }} -d www.{{ domain }}

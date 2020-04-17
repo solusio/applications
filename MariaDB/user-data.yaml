@@ -7,12 +7,23 @@ write_files:
       export DEBIAN_FRONTEND="noninteractive"
       export PASSWORD="{{ passwd }}"
 
-      debconf-set-selections <<< "mariadb-server mysql-server/root_password password $PASSWORD"
-      debconf-set-selections <<< "mariadb-server mysql-server/root_password_again password $PASSWORD" 
+      
       apt-get install software-properties-common
       apt update
       apt install -yq mariadb-server
+  - path: /var/lib/cloud/instance/scripts/mariadbvars
+    permissions: '0755'
+    content: |
+      
+      Y
+      {{ passwd }}
+      {{ passwd }}
+      Y
+      n
+      Y
+      Y
 
+      
 runcmd:
   - apt update
   - export DEBIAN_FRONTEND=noninteractive 
@@ -22,6 +33,8 @@ runcmd:
   - ufw allow 3306
   - chmod +x /var/lib/cloud/instance/scripts/mariadb.sh
   - /var/lib/cloud/instance/scripts/mariadb.sh
+  - 'cat /var/lib/cloud/instance/scripts/mariadbvars | mysql_secure_installation'
   - sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/mariadb.conf.d/50-server.cnf
-  - mysql -uroot -p -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root" AND `Host`="localhost"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
+  - mysql -uroot -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; GRANT ALL PRIVILEGES ON *.* TO "root"@"%"  IDENTIFIED BY "{{ passwd }}" WITH GRANT OPTION; FLUSH PRIVILEGES;'
   - service mysql restart
+  - rm -r /var/lib/cloud/instance/scripts/*
