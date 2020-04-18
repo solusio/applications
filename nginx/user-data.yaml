@@ -63,14 +63,14 @@ runcmd:
   - ufw allow 'Nginx FULL'
   - adduser --system --no-create-home --disabled-login --disabled-password nginx
   - mkdir -p /var/www/{{ domain }}/html
-  - chown -R nginx:nginx /var/www/{{ domain }}/html
+  - chown -R www-data:www-data /var/www/{{ domain }}/html
   - chmod -R 755 /var/www/{{ domain }}
   - cp /var/lib/cloud/instance/scripts/{{ domain }} /etc/nginx/sites-available/{{ domain }}
   - ln -s /etc/nginx/sites-available/{{ domain }} /etc/nginx/sites-enabled/
   - systemctl restart nginx
   - phpp=$(ls /etc/php/ | tr -d '\r')
   - echo "cgi.fix_pathinfo=0" >> /etc/php/$phpp/fpm/php.ini
-  - systemctl restart php$phpp-fpm
+  - systemctl restart php7.2-fpm.service
   - echo "<?php phpinfo();" > /var/www/{{ domain }}/html/info.php
   - phpv=$(ls /run/php/php7.*-fpm.sock)
   - sed -i 's,/run/php/php-fpm.sock,'"$phpv"',' "/etc/nginx/sites-available/{{ domain }}"
