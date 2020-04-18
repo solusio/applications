@@ -1,20 +1,20 @@
 {
-    "title": "OpenVPN",
-    "description": "Get your OpenVPN Server in seconds",
-    "type": "object",
-    "required": [
-      "domain",
-      "client"
-    ],
-    "properties": {
-      "domain": {
-        "type": "string",
-        "title": "Domain"
-      },
-      "client": {
-        "type": "string",
-        "title": "Client",
-        "default": "default"
-      }
+  "title": "OpenVPN",
+  "description": "Get your OpenVPN Server in seconds",
+  "type": "object",
+  "required": [
+    "domain",
+    "client"
+  ],
+  "properties": {
+    "domain": {
+      "type": "string",
+      "title": "Domain"
+    },
+    "client": {
+      "type": "string",
+      "title": "Client",
+      "default": "default"
     }
   }
+}
