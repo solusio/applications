@@ -5,7 +5,7 @@
   "required": [
     "domain",
     "client",
-	"passwd"
+    "passwd"
   ],
   "properties": {
     "domain": {
@@ -15,11 +15,12 @@
     "client": {
       "type": "string",
       "title": "Client",
-	  "default": "default"
+      "default": "default"
     },
-	"passwd":{
-	  "type": "string",
-	  "title": "Password for PiHole"
-	}
+    "passwd":{
+      "type": "string",
+      "title": "Password for PiHole",
+      "format": "password"
+    }
   }
 }

@@ -14,7 +14,8 @@
     },
     "passwd": {
       "type": "string",
-      "title": "Password"
+      "title": "Password",
+      "format": "password"
     }
   }
 }

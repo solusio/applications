@@ -1,30 +1,31 @@
 {
-    "title": "Plesk",
-    "description": "Next-Level server management platform",
-    "type": "object",
-    "properties": {
-        "license": {
-        "title": "Plesk Activation Key (Leave blank if not available)",
-        "type": "string"
-      },
-      "domain": {
-        "type": "string",
-        "title": "Hostname"
-      },
-      "user": {
-        "type": "string",
-        "title": "Username",
-        "default": "ElvisPlesky"
-      },
-      "rootmail": {
-        "type": "string",
-        "format": "email",
-        "title": "Administrators Email"
-      },
-      "passwd": {
-        "type": "string",
-        "title": "Password",
-        "minLenght": 5
-      }
+  "title": "Plesk",
+  "description": "Next-Level server management platform",
+  "type": "object",
+  "properties": {
+      "license": {
+      "title": "Plesk Activation Key (Leave blank if not available)",
+      "type": "string"
+    },
+    "domain": {
+      "type": "string",
+      "title": "Hostname"
+    },
+    "user": {
+      "type": "string",
+      "title": "Username",
+      "default": "ElvisPlesky"
+    },
+    "rootmail": {
+      "type": "string",
+      "format": "email",
+      "title": "Administrators Email"
+    },
+    "passwd": {
+      "type": "string",
+      "title": "Password",
+      "format": "password",
+      "minLenght": 5
     }
   }
+}

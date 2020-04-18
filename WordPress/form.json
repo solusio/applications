@@ -5,7 +5,7 @@
   "required": [
     "domain",
     "user",
-	"rootmail",
+    "rootmail",
     "passwd",
     "wpuser",
     "wpusermail",
@@ -35,8 +35,9 @@
     "passwd": {
       "type": "string",
       "title": "Password",
+      "format": "password",
       "minLenght": 8,
-	  "help": "At least 1 capital letter, 1 lowercase letter, 2 digits and 2 special chars."
+      "help": "At least 1 capital letter, 1 lowercase letter, 2 digits and 2 special chars."
     },
     "wpuser": {
       "type": "string",
@@ -48,7 +49,8 @@
     },
     "wppasswd": {
       "type": "string",
-      "title": "WordPress Password"
+      "title": "WordPress Password",
+      "format": "password"
     },
     "wptitle": {
       "type": "string",

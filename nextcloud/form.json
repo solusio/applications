@@ -5,8 +5,8 @@
   "required": [
     "email",
     "domain",
-	"user",
-	"pw"
+    "user",
+    "pw"
   ],
   "properties": {
     "email": {
@@ -17,13 +17,14 @@
       "type": "string",
       "title": "Domain"
     },
-	 "user": {
+    "user": {
       "type": "string",
       "title": "User"
     },
-	"pw": {
+    "pw": {
       "type": "string",
-      "title": "Password"
+      "title": "Password",
+      "format": "password"
     }
   }
 }
