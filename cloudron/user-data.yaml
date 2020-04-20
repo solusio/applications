@@ -2,5 +2,10 @@
 runcmd:
   - [ curl, -L, https://cloudron.io/cloudron-setup, -o, /root/setup ]
   - chmod +x /root/setup
-  - /root/setup --provider generic
-  - reboot
+  - echo "n" | /root/setup --provider generic
+power_state:
+ delay: "+2"
+ mode: reboot
+ message: Bye Bye
+ timeout: 30
+ condition: True
