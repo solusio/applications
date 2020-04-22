@@ -1,8 +1,29 @@
 #cloud-config
+write_files:
+  - path: /var/lib/cloud/instance/scripts/api/setup
+    permissions: '0755'
+    content: |
+      {
+       "dnsConfig": {
+        "provider": "wildcard",
+        "domain": "{{ domain }}",
+        "config": {
+          "token": ""
+        },
+       "tlsConfig": {
+        "provider": "letsencrypt-prod",
+        "wildcard": false
+       },
+       "sysinfoConfig": {
+        "provider": "generic"
+        }
+       }
+      }
 runcmd:
   - [ curl, -L, https://cloudron.io/cloudron-setup, -o, /root/setup ]
   - chmod +x /root/setup
   - echo "n" | /root/setup --provider generic
+  - curl -X POST -H "Content-Type: application/json" -d @/var/lib/cloud/instance/scripts/api/setup http://localhost/api/v1/cloudron/setup 
 power_state:
  delay: "+2"
  mode: reboot
