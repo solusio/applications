@@ -10,7 +10,7 @@
     "domain": {
       "type": "string",
       "title": "Domainname",
-      "default": ".crixu.me"
+      "default": ""
     },
     "passwd": {
       "type": "string",
