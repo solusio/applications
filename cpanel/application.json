@@ -1,0 +1,19 @@
+{
+    "applications-slug": "cpanel",
+    "application-name": "cPanel & WHM",
+    "version": "86",
+    "os": "centOS7",
+    "imageURL": "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2",
+    "login-type": "JS",
+    "login-link": "assets/login.js",
+    "icon": "cPanel",
+    "cloudinitversion": "v2",
+    "longDescription": "",
+    "shortDescription": "",
+    "supportLink": "",
+    "costs": 0,
+    "minCPU": 1,
+    "minMemoryMB": 1024,
+    "minSpaceGB": 20
+
+}

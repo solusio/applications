@@ -7,7 +7,10 @@ write_files:
       FILE=/root/setup.sh
       if test -f "$FILE"; then
        /root/setup.sh
+       /usr/local/cpanel/bin/set_hostname {{ hostname }}
+       /usr/local/cpanel/scripts/configure_firewall_for_cpanel
        /usr/local/cpanel/cpkeyclt
+       /usr/local/cpanel/scripts/upcp
        /usr/local/cpanel/bin/checkallsslcerts
        systemctl disable cpanel-installer.service
        rm /etc/systemd/system/cpanel-installer.service
@@ -43,4 +46,5 @@ runcmd:
  - hostnamectl set-hostname {{ hostname }}
  - echo "SELINUX=disabled" > /etc/selinux/config
  - systemctl enable cpanel-installer.service
+ - echo "{{ passwd }}" | passwd --stdin root 
  - /root/reboot-chk
