@@ -2,24 +2,29 @@ let username = 'root';
 let password = '{{ passwd }}';
 
 
-fetch("https://{{ hostname }}:2087/json-api/create_user_session?api.version=1&user=root&service=whostmgrd", {
+
+function json(response) {
+  return response.json()
+}
+
+// Still some issues with CORS headers. Might be better to use a proxy like: 
+// https://cors-anywhere.herokuapp.com/https://{{hostname}}:2087/json-api/create_user_session?api.version=1&user=root&service=whostmgrd
+fetch("https://{{hostname}}:2087/json-api/create_user_session?api.version=1&user=root&service=whostmgrd" , {
    headers: {
-    Authorization: "Basic "+ btoa(username+":"+password)
+    "Authorization": "Basic "+ btoa(username+":"+password),
+	"Origin": "{{ hostname }}"
   },
   method: "GET"
 })
-  .then(function(response){
-	if(!response.ok){
-    throw Error(response.statusText);
-    }
-  })
-  .then((data) => {
-	console.log(data)
-	var obj = data.stdout;
-	var link = obj.split(/\r?\n/);
-	openWindow(link[0]);
+  .then(json)
+  .then(function(data){
+	var link = data.data.url;
+	console.log("link: ",link);
+	openWindow(link);
 	end();
-  }).catch(function(error){
+	})
+  
+  .catch(function(error){
 
        console.log("Magic link couldn't be created: "+error);
 
