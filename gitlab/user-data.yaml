@@ -3,5 +3,5 @@ runcmd:
   - apt update
   - apt install -yq curl openssh-server ca-certificates
   - curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh |  bash
-  - export EXTERNAL_URL="http://{{ hostname }}"
+  - export EXTERNAL_URL="http://{{ address }}"
   - apt install -yq gitlab-ee

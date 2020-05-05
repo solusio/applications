@@ -12,7 +12,7 @@ function json(response) {
 fetch("https://{{hostname}}:2087/json-api/create_user_session?api.version=1&user=root&service=whostmgrd" , {
    headers: {
     "Authorization": "Basic "+ btoa(username+":"+password),
-	"Origin": "{{ hostname }}"
+	"Origin": "{{ address }}"
   },
   method: "GET"
 })

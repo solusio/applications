@@ -4,7 +4,7 @@
     "version": "5.0",
     "os": "ubuntu1804",
     "login-type": "URL",
-    "login-link": "https://{{ hostname }}",
+    "login-link": "https://{{ address }}",
     "imageURL": "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img",
     "icon": "https://cloudron.io/img/logo.png",
     "cloudinitversion": "v2",
@@ -12,7 +12,7 @@
     "shortDescription": "",
     "supportLink": "",
     "costs": "0",
-    "outputURL": "https://{{ hostname }}",
+    "outputURL": "https://{{ address }}",
     "minCPU": "1",
     "minMemoryMB": "1024",
     "minSpaceGB": "20"

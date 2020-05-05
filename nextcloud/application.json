@@ -12,7 +12,7 @@
     "shortDescription": "",
     "supportLink": "",
     "costs": "0",
-    "outputURL": "https://{{ hostname }}",
+    "outputURL": "https://{{ address }}",
     "minCPU": "1",
     "minMemoryMB": "128",
     "minSpaceGB": "5"
