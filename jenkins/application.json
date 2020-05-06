@@ -5,7 +5,7 @@
     "os": "ubuntu1804",
     "imageURL": "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img",
     "login-type": "URL",
-    "login-link": "http://{{hostname}}:8080/",
+    "login-link": "http://{{ address }}:8080/",
     "icon": "jenkins",
     "cloudinitversion": "v2",
     "longDescription": "",
