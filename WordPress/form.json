@@ -13,10 +13,10 @@
     "wptitle" 
   ],
   "properties": {
-      "license": {
+    "license": {
       "title": "Plesk Activation Key (Leave blank if not available)",
       "type": "string",
-  "default": " "
+      "default": " "
     },
     "domain": {
       "type": "string",
