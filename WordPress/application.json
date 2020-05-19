@@ -1,7 +1,7 @@
 {
     "applications-slug": "wordpress",
     "application-name": "WordPress on Plesk",
-    "version": "18.0",
+    "version": "18",
     "os": "centOS7",
     "imageURL": "http://images.prod.solus.io/solus-io-centos-plesk-18.0.24.qcow2",
     "login-type": "JS",
