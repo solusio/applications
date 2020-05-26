@@ -2,6 +2,12 @@
   "title": "Plesk",
   "description": "Next-Level server management platform",
   "type": "object",
+  "required": [
+    "domain",
+    "user",
+    "rootmail",
+    "passwd"
+  ],
   "properties": {
     "license": {
       "title": "Plesk Activation Key (Leave blank if not available)",
