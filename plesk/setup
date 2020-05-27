@@ -3,7 +3,6 @@ echo "Lets start"
 . /root/config.ini
 # expected variables from the sourced file located at /root/config
 # domain - domain to create subscription for 
-# rootpw - root password to be used by plesk admin
 # rootmail - root mail to be used by plesk
 # user - user used for the subscription
 # passwd - password for the above user
@@ -29,7 +28,7 @@ else
     if [[ -n "$activation_key" ]]; then
         echo "Initialize Plesk" 
         printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
-        plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true 
+        plesk bin init_conf --init -hostname $domain -name $user -passwd $passwd -email $rootmail -license_agreed true 
         plesk bin extension -g letsencrypt
         plesk bin license --install $activation_key 
 
@@ -48,7 +47,7 @@ else
     else
         echo "Initialize Plesk" 
          printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
-         plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true -trial_license true
+         plesk bin init_conf --init -hostname $domain -name $user -passwd $passwd -email $rootmail -license_agreed true -trial_license true
          plesk bin extension -g letsencrypt
         # Setting up the subscription inside plesk
 	    echo "Setting up the subscription inside plesk"
