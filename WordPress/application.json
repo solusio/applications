@@ -15,5 +15,4 @@
     "minCPU": "1",
     "minMemoryMB": "512",
     "minSpaceGB": "20"
-
 }
