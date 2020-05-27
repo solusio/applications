@@ -36,7 +36,7 @@ else
 
         # Setting up the subscription inside plesk
 	    echo "Setting up the subscription inside plesk"
-        plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login $user -passwd $passwd -ip $ip 
+        plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login ${user,,} -passwd $passwd -ip $ip 
         OUT=$?
         # Check if Subscription was created without errors
 	    echo "Check if Subscription was created without errors" 
@@ -53,7 +53,7 @@ else
          plesk bin extension -g letsencrypt
         # Setting up the subscription inside plesk
 	    echo "Setting up the subscription inside plesk"
-        plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login $user -passwd $passwd -ip $ip 
+        plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login ${user,,} -passwd $passwd -ip $ip 
         OUT=$?
         # Check if Subscription was created without errors
 	    echo "Check if Subscription was created without errors" 

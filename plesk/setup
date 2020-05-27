@@ -34,7 +34,7 @@ else
 
         # Setting up the subscription inside plesk
 	    echo "Setting up the subscription inside plesk"
-        plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login $user -passwd $passwd -ip $ip 
+        plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login ${user,,} -passwd $passwd -ip $ip 
         OUT=$?
         # Check if Subscription was created without errors
 	    echo "Check if Subscription was created without errors" 
@@ -51,13 +51,12 @@ else
          plesk bin extension -g letsencrypt
         # Setting up the subscription inside plesk
 	    echo "Setting up the subscription inside plesk"
-        plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login $user -passwd $passwd -ip $ip 
+        plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login ${user,,} -passwd $passwd -ip $ip 
         OUT=$?
         # Check if Subscription was created without errors
 	    echo "Check if Subscription was created without errors" 
         if [ $OUT -ne 0 ];then
         printf '{\n"status":"Error while creating the  Subscription",\n"progress":"100"\n}' > /var/www/vhosts/default/htdocs/progress.json
-        echo
         echo "An error occurred! The setup of Plesk failed. Please see logged lines above for error handling!"
         exit 1
          fi
