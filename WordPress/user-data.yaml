@@ -12,7 +12,7 @@ write_files:
       wp_passwd='{{ wppasswd }}'
       wp_mail='{{ wpusermail }}'
 runcmd:
-  - [ curl, -L, "https://raw.githubusercontent.com/solusio/applications/master/wordpress/setup", -o, "/root/setup.sh" ]
+  - [ curl, -L, "https://raw.githubusercontent.com/solusio/applications/master/WordPress/setup", -o, "/root/setup.sh" ]
   - [ chmod, +x, "/root/setup.sh" ]
   - sh /root/setup.sh | while IFS= read -r line; do printf "%s %s\n" "$(date)" "$line"; done >> /var/log/logfile
   - echo "complete" > /var/www/vhosts/default/htdocs/__setup_complete.html
