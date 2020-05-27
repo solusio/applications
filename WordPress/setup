@@ -32,7 +32,6 @@ else
         printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
         plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true 
         plesk bin extension -g letsencrypt
-        plesk bin extension --exec letsencrypt cli.php -d $domain -m $rootmail --letsencrypt-plesk:plesk-secure-panel 
         plesk bin license --install $activation_key 
 
         # Setting up the subscription inside plesk
@@ -50,9 +49,8 @@ else
     else
         echo "Initialize Plesk" 
          printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
-         plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true  -trial_license true
+         plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true -trial_license true
          plesk bin extension -g letsencrypt
-        plesk bin extension --exec letsencrypt cli.php -d $domain -m $rootmail --letsencrypt-plesk:plesk-secure-panel 
         # Setting up the subscription inside plesk
 	    echo "Setting up the subscription inside plesk"
         plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login $user -passwd $passwd -ip $ip 
@@ -66,6 +64,9 @@ else
         exit 1
          fi
     fi
+    #Secure Plesk with Let's Encrypt
+    plesk bin extension --exec letsencrypt cli.php -d $domain -m $rootmail --letsencrypt-plesk:plesk-secure-panel 
+
     # set solution type to identify servers
 	echo "set solution type to identify servers" 
     plesk bin settings --set solution_type="WPOnSolusIO"

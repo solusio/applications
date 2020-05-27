@@ -22,7 +22,7 @@ else
     done
     # Initialize Plesk
    
-     if [[ -z $ip ]]; then
+    if [[ -z $ip ]]; then
             ip=$(curl https://ipinfo.io/ip);
     fi
      printf '{\n"status":"Configuring Plesk",\n"progress":"20"\n}' > /var/www/vhosts/default/htdocs/progress.json
@@ -31,7 +31,6 @@ else
         printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
         plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true 
         plesk bin extension -g letsencrypt
-        plesk bin extension --exec letsencrypt cli.php -d $domain -m $rootmail --letsencrypt-plesk:plesk-secure-panel 
         plesk bin license --install $activation_key 
 
         # Setting up the subscription inside plesk
@@ -49,9 +48,8 @@ else
     else
         echo "Initialize Plesk" 
          printf '{\n"status":"Initialize Plesk",\n"progress":"5"\n}' > /var/www/vhosts/default/htdocs/progress.json
-         plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true  -trial_license true
+         plesk bin init_conf --init -hostname $domain -name $user -passwd $rootpw -email $rootmail -license_agreed true -trial_license true
          plesk bin extension -g letsencrypt
-        plesk bin extension --exec letsencrypt cli.php -d $domain -m $rootmail --letsencrypt-plesk:plesk-secure-panel 
         # Setting up the subscription inside plesk
 	    echo "Setting up the subscription inside plesk"
         plesk bin subscription --create $domain -owner admin -service-plan "UNLIMITED" -login $user -passwd $passwd -ip $ip 
@@ -65,6 +63,10 @@ else
         exit 1
          fi
     fi
+
+    #securing Plesk with Let's Encrypt
+    plesk bin extension --exec letsencrypt cli.php -d $domain -m $rootmail --letsencrypt-plesk:plesk-secure-panel 
+
     # set solution type to identify servers
 	echo "set solution type to identify servers" 
     plesk bin settings --set solution_type="solusIO"
@@ -78,9 +80,6 @@ else
     # Install the WordPress Toolkit
     plesk bin extension --install wp-toolkit
     	
- 
-        
-    plesk bin extension -g letsencrypt
     printf '{\n"status":"Setting up Let´s Encrypt",\n"progress":"95"\n}' > /var/www/vhosts/default/htdocs/progress.json
     plesk bin extension --exec letsencrypt cli.php -d $domain  -m $rootmail  
 
