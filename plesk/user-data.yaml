@@ -3,11 +3,12 @@ write_files:
   - path: /root/config.ini
     permissions: '0755'
     content: |
-      domain={{ domain }}
-      rootpw='{{ passwd }}'
-      user='{{ user }}'
-      passwd='{{ passwd }}'
-      activation_key={{ license }}
+      domain="{{ domain }}""
+      rootpw="{{ passwd }}""
+      user="{{ user }}""
+      passwd="{{ passwd }}""
+      activation_key="{{ license }}"
+      rootmail="{{ rootmail }}"
 runcmd:
   - [ curl, "https://raw.githubusercontent.com/solusio/applications/master/plesk/setup", -o, "/root/setup.sh" ]
   - [ chmod, +x, "/root/setup.sh" ]
