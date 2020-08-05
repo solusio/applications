@@ -22,7 +22,7 @@ else
     # Initialize Plesk
    
     if [[ -z $ip ]]; then
-            ip=$(curl https://ipinfo.io/ip);
+            ip=$(plesk db -Ne 'SELECT IP_Address FROM IP_Addresses LIMIT 1');
     fi
      printf '{\n"status":"Configuring Plesk",\n"progress":"20"\n}' > /var/www/vhosts/default/htdocs/progress.json
     if [[ -n "$activation_key" ]]; then
