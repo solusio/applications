@@ -13,9 +13,9 @@ echo "Lets start"
 FILE=/etc/plesk
 if test -f "$FILE"; then
     echo "Seems like everything was already done" 
-else 
+else
     printf '{\n"status":"Waiting for VM",\n"progress":"0"\n}' > /var/www/vhosts/default/htdocs/progress.json
-    while [[ $(plesk bin cloning --status) == "1" ]] ; do
+    while [[ $(plesk bin cloning --status) != "0" ]] ; do
         sleep 5
     done
     # Initialize Plesk
