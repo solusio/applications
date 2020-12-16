@@ -1,6 +1,6 @@
 {
     "applications-slug": "cloudron",
-    "application-name": "CloudRon",
+    "application-name": "Cloudron",
     "version": "5.0",
     "os": "ubuntu1804",
     "login-type": "URL",
@@ -9,8 +9,8 @@
     "icon": "https://cloudron.io/img/logo.png",
     "cloudinitversion": "v2",
     "longDescription": "",
-    "shortDescription": "",
-    "supportLink": "",
+    "shortDescription": "Cloudron is a complete solution for running apps like WordPress, GitLab, Rocket.Chat and keeping them up-to-date and secure.",
+    "supportLink": "https://forum.cloudron.io/",
     "costs": "0",
     "outputURL": "https://{{ address }}",
     "minCPU": "1",
