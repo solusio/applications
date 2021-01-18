@@ -1,0 +1,36 @@
+#cloud-config
+write_files:
+  - path: /root/jitsi_installer.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      hostname="{{ hostname }}"
+      hostname1="{{ domain }}"
+      address="{{ address }}"
+      length=$($hostname1 | wc -c)
+      if [ "$length" -eq "0" ]; then
+      hostnamectl set-hostname $hostname
+      else
+      hostnamectl set-hostname $domain
+      fi
+      curl https://download.jitsi.org/jitsi-key.gpg.key | sudo sh -c 'gpg --dearmor > /usr/share/keyrings/jitsi-keyring.gpg'
+      echo 'deb [signed-by=/usr/share/keyrings/jitsi-keyring.gpg] https://download.jitsi.org stable/' | sudo tee /etc/apt/sources.list.d/jitsi-stable.list > /dev/null
+      apt-add-repository universe
+      apt update
+      ufw allow 80/tcp
+      ufw allow 80/tcp
+      ufw allow 443/tcp
+      ufw allow 4443/tcp
+      ufw allow 10000/udp
+      ufw allow 22/tcp
+      ufw enable
+      if [ "$length" -eq "0" ]; then
+      echo "jitsi-videobridge jitsi-videobridge/jvb-hostname string $address" | debconf-set-selections
+      else
+      echo "jitsi-videobridge jitsi-videobridge/jvb-hostname string $domain" | debconf-set-selections
+      fi
+      echo "jitsi-meet-web-config   jitsi-meet/cert-choice  select  Generate a new self-signed certificate (You will later get a chance to obtain a Let's encrypt certificate)" | debconf-set-selections
+      apt install jitsi-meet -y
+runcmd:
+  - apt-get install gnupg2 curl apt-transport-https debconf-utils ufw -y
+  - sh /root/jitsi_installer.sh 2>&1 >> /tmp/jitsi-installer.log

@@ -8,6 +8,7 @@ SolusIO (https://www.solus.io) supports 1-click deployments of applications via 
 * cPanel
 * GitLab EE
 * Jenkins
+* Jitsi Meet
 * Joomla!
 * MariaDB
 * NextCloud
@@ -21,7 +22,6 @@ SolusIO (https://www.solus.io) supports 1-click deployments of applications via 
 * HAProxy Loadbalancer (with ability to configure attached web nodes easily)
 * Drupal
 * Docker (with the ability to select a Docker image to be started with specified parameters)
-* Jitsi Server (for Video Conferencing)
 * Mattermost (the popular chat & communication software)
 * OpenFaaS (to support serverless functions)
 * MongoDB (NoSQL DB)
