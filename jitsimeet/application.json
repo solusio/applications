@@ -1,0 +1,19 @@
+{
+    "applications-slug": "jitsimeet",
+    "application-name": "Jitsi Meet",
+    "version": "2.0",
+    "os": "ubuntu2004",
+    "login-type": "URL",
+    "login-link": "https://{{ address }}",
+    "imageURL": "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img",
+    "icon": "Jitsi",
+    "cloudinitversion": "v2",
+    "longDescription": "",
+    "shortDescription": "Jitsi is a collection of Open Source projects which provide state-of-the-art video conferencing capabilities that are secure, easy to use and easy to self-host.",
+    "supportLink": "https://community.jitsi.org/",
+    "costs": "0",
+    "outputURL": "https://{{ address }}",
+    "minCPU": "1",
+    "minMemoryMB": "1024",
+    "minSpaceGB": "20"
+}

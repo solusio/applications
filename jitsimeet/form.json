@@ -1,0 +1,13 @@
+{
+  "title": "Jitsi Meet Self-Host Server",
+  "description": "Jitsi is a collection of Open Source projects which provide state-of-the-art video conferencing capabilities that are secure, easy to use and easy to self-host.",
+  "type": "object",
+  "properties": {
+    "domain": {
+      "type": "string",
+      "title": "Jitsi Server Hostname",
+      "format": "domain",
+      "description": "Recommended to leave the field blank if hostname is not DNS resolvable, application will be configured with server's IP address."
+    }
+  }
+}
