@@ -10,7 +10,7 @@
     "wpuser",
     "wpusermail",
     "wppasswd",
-    "wptitle" 
+    "wptitle"
   ],
   "properties": {
     "license": {
@@ -36,7 +36,8 @@
       "type": "string",
       "title": "Password",
       "format": "password",
-      "minLenght": 8,
+      "pattern": "^[a-zA-Z0-9_-]*$",
+      "minLength": 8,
       "help": "At least 1 capital letter, 1 lowercase letter, 2 digits and 2 special chars."
     },
     "wpuser": {
