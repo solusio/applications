@@ -20,7 +20,7 @@
     "user": {
       "type": "string",
       "title": "Username",
-      "default": "ElvisPlesky"
+      "default": "admin"
     },
     "rootmail": {
       "type": "string",
@@ -31,7 +31,8 @@
       "type": "string",
       "title": "Password",
       "format": "password",
-      "minLenght": 5
+      "pattern": "^[a-zA-Z0-9_-]*$",
+      "minLength": 5
     }
   }
 }
