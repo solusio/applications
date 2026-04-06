@@ -1,0 +1,17 @@
+{
+    "applications-slug": "openclaw",
+    "application-name": "OpenClaw",
+    "version": "latest",
+    "os": "ubuntu2404",
+    "imageURL": "https://images.prod.solus.io/noble-server-cloudimg-amd64.img",
+    "login-type": "INFO",
+    "icon": "Application",
+    "cloudinitversion": "v2",
+    "longDescription": "Personal AI assistant platform with local LLM inference",
+    "shortDescription": "AI assistant with Gateway UI",
+    "supportLink": "",
+    "costs": "0",
+    "minCPU": "4",
+    "minMemoryMB": "8192",
+    "minSpaceGB": "40"
+}
