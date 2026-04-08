@@ -1,0 +1,52 @@
+#!/bin/bash
+# Copyright 2026. WebPros International GmbH. All rights reserved.
+set -euo pipefail
+
+LOG_TAG="[openclaw-setup]"
+log() { echo "${LOG_TAG} $*"; }
+
+log "Installing Node.js 22.x..."
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+apt-get install -y nodejs
+
+log "Creating openclaw user..."
+useradd -m -s /bin/bash openclaw
+
+log "Installing OpenClaw..."
+npm install -g openclaw@latest
+
+log "Running OpenClaw onboard..."
+su - openclaw -c "openclaw onboard --non-interactive --accept-risk --mode local --flow quickstart --skip-health"
+
+log "Configuring TLS and LAN access..."
+su - openclaw -c "openclaw config set gateway.tls.enabled true"
+su - openclaw -c "openclaw config set gateway.controlUi.dangerouslyAllowHostHeaderOriginFallback true"
+
+log "Creating systemd service..."
+cat > /etc/systemd/system/openclaw.service <<'UNIT'
+[Unit]
+Description=OpenClaw Gateway
+After=network.target
+
+[Service]
+Type=simple
+User=openclaw
+WorkingDirectory=/home/openclaw
+ExecStart=/usr/bin/openclaw gateway run --bind lan --port 18789
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=NODE_COMPILE_CACHE=/var/tmp/openclaw-compile-cache
+Environment=OPENCLAW_NO_RESPAWN=1
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+log "Starting OpenClaw service..."
+mkdir -p /var/tmp/openclaw-compile-cache
+systemctl daemon-reload
+systemctl enable openclaw.service
+systemctl start openclaw.service
+
+log "OpenClaw installation complete."
