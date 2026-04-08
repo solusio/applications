@@ -13,7 +13,7 @@ log "Creating openclaw user..."
 useradd -m -s /bin/bash openclaw
 
 log "Installing OpenClaw..."
-npm install -g openclaw@latest
+npm install -g openclaw@2026.4.5
 
 log "Running OpenClaw onboard..."
 su - openclaw -c "openclaw onboard --non-interactive --accept-risk --mode local --flow quickstart --skip-health"
