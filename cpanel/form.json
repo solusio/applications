@@ -1,15 +1,5 @@
 {
   "title": "cPanel",
   "description": "Create an exceptional hosting experience.\nIndustry leading hosting platform with world-class support.",
-  "type": "object",
-  "required": [
-    "passwd"
-  ],
-  "properties": {
-    "passwd": {
-      "type": "string",
-      "title": "WHM-Password for root",
-      "format": "password"
-    }
-  }
+  "type": "object"
 }

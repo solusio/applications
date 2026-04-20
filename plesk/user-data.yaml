@@ -3,17 +3,16 @@ write_files:
   - path: /root/config.ini
     permissions: '0755'
     content: |
-      domain="{{ domain }}""
-      rootpw="{{ passwd }}""
-      user="{{ user }}""
-      passwd="{{ passwd }}""
+      domain="{{ domain }}"
+      rootpw="{{ passwd }}"
+      user="{{ user }}"
+      passwd="{{ passwd }}"
       activation_key="{{ license }}"
       rootmail="{{ rootmail }}"
 runcmd:
   - [ curl, "https://raw.githubusercontent.com/solusio/applications/master/plesk/setup", -o, "/root/setup.sh" ]
   - [ chmod, +x, "/root/setup.sh" ]
-  - sh /root/setup.sh | while IFS= read -r line; do printf "%s %s\n" "$(date)" "$line"; done >>/var/log/logfile
+  - /bin/bash /root/setup.sh | while IFS= read -r line; do printf "%s %s\n" "$(date)" "$line"; done >>/var/log/logfile
   - echo "complete" > /var/www/vhosts/default/htdocs/__setup_complete.html
   - rm -r /root/config.ini
   - rm -r /root/setup.sh
-  

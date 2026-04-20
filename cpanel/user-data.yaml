@@ -1,50 +1,18 @@
 #cloud-config
 write_files:
-  - path: /root/cp-installer
+  - path: /root/setup.sh
     permissions: '0755'
     content: |
       #!/bin/bash
-      FILE=/root/setup.sh
-      if test -f "$FILE"; then
-       /root/setup.sh
-       /usr/local/cpanel/bin/set_hostname {{ address }}
-       /usr/local/cpanel/scripts/configure_firewall_for_cpanel
-       /usr/local/cpanel/cpkeyclt
-       /usr/local/cpanel/scripts/upcp
-       /usr/local/cpanel/bin/checkallsslcerts
-       systemctl disable cpanel-installer.service
-       rm /etc/systemd/system/cpanel-installer.service
-       rm /root/setup.sh
-       rm /root/cp-installer
+      HOSTNAME={{ hostname }}
+      match=$(echo "${HOSTNAME}" | grep -oP '^(?!\-)(?:[a-zA-Z\d\-]{0,62}[a-zA-Z\d]\.){1,126}(?!\d+)[a-zA-Z\d]{1,63}$')
+      if [ -z "$match" ]; then
+        hostnamectl set-hostname "${HOSTNAME}.local.domain"
+        HOSTNAME="${HOSTNAME}.local.domain"
       fi
-  - path: /etc/systemd/system/cpanel-installer.service
-    permissions: '0755'
-    content: |
-      [Service]
-      Type=oneshot
-      RemainAfterExit=yes
-      ExecStart=/root/cp-installer 
-      [Install]
-      WantedBy=multi-user.target
-      [Unit]
-      Wants=network-online.target multi-user.target
-      After=network-online.target multi-user.target
-  - path: /root/reboot-chk
-    permissions: '0755'
-    content: |
-      #!/bin/bash
-      FILE=/root/isreboot
-      if test -f "$FILE"; then
-       echo "nothing to do"
-      else
-       touch /root/isreboot
-       reboot
-      fi
+      setenforce 0
+      /usr/local/cpanel/bin/set_hostname "${HOSTNAME}"
+      /usr/local/cpanel/cpkeyclt
 runcmd:
- - curl -L "https://securedownloads.cpanel.net/latest" -o /root/setup.sh
- - chmod +x /root/setup.sh
- - hostnamectl set-hostname {{ address }}
- - echo "SELINUX=disabled" > /etc/selinux/config
- - systemctl enable cpanel-installer.service
- - echo "{{ passwd }}" | passwd --stdin root 
- - /root/reboot-chk
+  - sh /root/setup.sh
+  - rm -f /root/setup.sh
