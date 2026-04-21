@@ -1,0 +1,198 @@
+#!/bin/bash
+# Copyright 2026. WebPros International GmbH. All rights reserved.
+#
+# n8n application installer for SolusVM 2.
+#
+# Runs on a fresh VM provisioned from solusvm2-ubuntu-24.04-docker.qcow2.
+# Idempotent via /etc/n8n-installed sentinel.
+#
+# Ships with a self-signed TLS certificate bound to the VM primary IP so the
+# default experience is HTTPS. The browser will show a one-time warning that
+# the user accepts with "Advanced -> Proceed" (the certificate has a matching
+# IP SAN, so the "Proceed" option is available). Admins with a real domain can
+# replace /opt/n8n/certs/{fullchain,privkey}.pem, update N8N_HOST/WEBHOOK_URL,
+# and restart the service.
+#
+# Usage:
+#   cloud-init:      curl -fsSL <raw-url>/setup | bash
+#   manual / test:   sudo bash setup
+#
+# Env overrides:
+#   N8N_VERSION   default: latest (pin to a tag like 1.80.0 for reproducible builds)
+#   N8N_PORT      default: 5678
+#   HOST_IP       default: first address from `hostname -I`
+#   TLS_DAYS      default: 3650 (self-signed validity)
+set -euo pipefail
+
+LOG_TAG="[n8n-setup]"
+log() { printf '%s %s\n' "${LOG_TAG}" "$*"; }
+
+SENTINEL=/etc/n8n-installed
+N8N_DIR=/opt/n8n
+CERT_DIR="${N8N_DIR}/certs"
+N8N_VERSION="${N8N_VERSION:-latest}"
+N8N_PORT="${N8N_PORT:-5678}"
+TLS_DAYS="${TLS_DAYS:-3650}"
+
+# UID that the n8n container runs as (image default is `node` = 1000).
+N8N_UID=1000
+N8N_GID=1000
+
+if [[ -f "$SENTINEL" ]]; then
+    log "Already installed (sentinel: $SENTINEL). Nothing to do."
+    exit 0
+fi
+
+if [[ $EUID -ne 0 ]]; then
+    echo "${LOG_TAG} Must run as root" >&2
+    exit 1
+fi
+
+for bin in docker openssl curl; do
+    if ! command -v "$bin" &>/dev/null; then
+        echo "${LOG_TAG} Required binary missing: $bin" >&2
+        exit 1
+    fi
+done
+
+START=$(date +%s)
+
+log "Detecting host IP"
+HOST_IP="${HOST_IP:-$(hostname -I | awk '{print $1}')}"
+if [[ -z "$HOST_IP" ]]; then
+    echo "${LOG_TAG} Unable to detect host IP, set HOST_IP env" >&2
+    exit 1
+fi
+log "Host IP: $HOST_IP"
+
+log "Pulling n8n image: docker.n8n.io/n8nio/n8n:${N8N_VERSION}"
+PULL_START=$(date +%s)
+docker pull "docker.n8n.io/n8nio/n8n:${N8N_VERSION}"
+log "Image pulled in $(($(date +%s) - PULL_START))s"
+
+# Resolve the actual version label from the image so the log and .env record
+# what was installed, not just the moving "latest" tag.
+RESOLVED_VERSION="$(docker inspect --format '{{index .Config.Labels "org.opencontainers.image.version"}}' \
+    "docker.n8n.io/n8nio/n8n:${N8N_VERSION}" 2>/dev/null || true)"
+if [[ -z "$RESOLVED_VERSION" ]]; then
+    RESOLVED_VERSION="${N8N_VERSION}"
+fi
+log "Resolved n8n version: ${RESOLVED_VERSION}"
+
+log "Creating $N8N_DIR"
+mkdir -p "$N8N_DIR"
+chmod 0755 "$N8N_DIR"
+
+log "Generating self-signed TLS certificate for IP ${HOST_IP} (valid ${TLS_DAYS}d)"
+mkdir -p "$CERT_DIR"
+umask 077
+openssl req -x509 -nodes \
+    -newkey rsa:4096 \
+    -days "${TLS_DAYS}" \
+    -keyout "${CERT_DIR}/privkey.pem" \
+    -out "${CERT_DIR}/fullchain.pem" \
+    -subj "/CN=${HOST_IP}" \
+    -addext "subjectAltName=IP:${HOST_IP}" \
+    -addext "basicConstraints=critical,CA:FALSE" \
+    -addext "keyUsage=critical,digitalSignature,keyEncipherment" \
+    -addext "extendedKeyUsage=serverAuth" 2>/dev/null
+umask 022
+# n8n inside the container reads as UID 1000; grant that UID access but no one else.
+chown -R "${N8N_UID}:${N8N_GID}" "$CERT_DIR"
+chmod 0700 "$CERT_DIR"
+chmod 0600 "${CERT_DIR}/privkey.pem"
+chmod 0644 "${CERT_DIR}/fullchain.pem"
+
+log "Generating secrets"
+ENC_KEY=$(openssl rand -hex 32)
+JWT_SECRET=$(openssl rand -hex 32)
+
+log "Writing $N8N_DIR/.env"
+umask 077
+cat > "$N8N_DIR/.env" <<EOF
+N8N_VERSION=${N8N_VERSION}
+N8N_RESOLVED_VERSION=${RESOLVED_VERSION}
+N8N_PORT=${N8N_PORT}
+N8N_ENCRYPTION_KEY=${ENC_KEY}
+N8N_USER_MANAGEMENT_JWT_SECRET=${JWT_SECRET}
+N8N_HOST=${HOST_IP}
+N8N_PROTOCOL=https
+N8N_SSL_KEY=/certs/privkey.pem
+N8N_SSL_CERT=/certs/fullchain.pem
+WEBHOOK_URL=https://${HOST_IP}:${N8N_PORT}/
+GENERIC_TIMEZONE=UTC
+EOF
+chmod 0600 "$N8N_DIR/.env"
+umask 022
+
+log "Writing $N8N_DIR/docker-compose.yml"
+cat > "$N8N_DIR/docker-compose.yml" <<'COMPOSE'
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:${N8N_VERSION}
+    container_name: n8n
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${N8N_PORT}:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./certs:/certs:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-check-certificate -qO- https://localhost:5678/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  n8n_data:
+COMPOSE
+
+log "Writing /etc/systemd/system/n8n.service"
+cat > /etc/systemd/system/n8n.service <<EOF
+[Unit]
+Description=n8n workflow automation (Docker Compose)
+After=docker.service network-online.target
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=${N8N_DIR}
+ExecStart=/usr/bin/docker compose up -d --remove-orphans
+ExecStop=/usr/bin/docker compose down
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+log "Enabling and starting n8n.service"
+systemctl daemon-reload
+systemctl enable --now n8n.service
+
+log "Waiting for n8n to answer on /healthz (up to 120s)"
+WAIT_START=$(date +%s)
+ATTEMPTS=60
+for i in $(seq 1 $ATTEMPTS); do
+    if curl -fsSk "https://localhost:${N8N_PORT}/healthz" >/dev/null 2>&1; then
+        log "n8n healthz OK after $(($(date +%s) - WAIT_START))s"
+        break
+    fi
+    if [[ $i -eq $ATTEMPTS ]]; then
+        echo "${LOG_TAG} n8n did not become healthy in $((ATTEMPTS * 2))s" >&2
+        systemctl status n8n.service --no-pager || true
+        (cd "$N8N_DIR" && docker compose logs --tail=80) || true
+        exit 1
+    fi
+    sleep 2
+done
+
+touch "$SENTINEL"
+
+ELAPSED=$(($(date +%s) - START))
+log "=== Installation complete in ${ELAPSED}s ==="
+log "n8n URL: https://${HOST_IP}:${N8N_PORT}/"
+log "Certificate is self-signed; accept the browser warning once (Advanced -> Proceed)."
+log "Container status:"
+docker ps --filter name=n8n --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
