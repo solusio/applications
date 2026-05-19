@@ -1,0 +1,17 @@
+{
+    "applications-slug": "n8n",
+    "application-name": "n8n",
+    "version": "latest",
+    "os": "ubuntu2404",
+    "imageURL": "https://images.prod.solus.io/solusvm2-ubuntu-24.04-docker.qcow2",
+    "login-type": "INFO",
+    "icon": "n8n",
+    "cloudinitversion": "v2",
+    "longDescription": "Workflow automation platform with 400+ integrations. Self-hosted on Docker with a pre-generated self-signed TLS certificate.",
+    "shortDescription": "Workflow automation (self-hosted)",
+    "supportLink": "https://docs.n8n.io/",
+    "costs": "0",
+    "minCPU": "2",
+    "minMemoryMB": "4096",
+    "minSpaceGB": "20"
+}
