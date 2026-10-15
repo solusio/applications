@@ -23,7 +23,7 @@ Heavier apps keep `user-data.yaml` thin: it writes templated values to `/root/co
 - `setup` scripts are served from the **`master` branch on GitHub**, so changes there are not live until merged to master.
 - The variables a `setup` script expects must match the `{{ }}` names in `user-data.yaml` and the properties in `form.json`; when adding a form field, update all three (plus `login.*` if it is shown to the user).
 - Lighter apps (e.g. nginx, jenkins) inline everything in `user-data.yaml` with no `setup` file.
-- `OpenClaw` has no form and uses `login-type: INFO`; its `setup` installs Node 22 and a pinned/`latest` `openclaw` npm package, creates an `openclaw` user and a systemd service, and logs to `/var/log/openclaw-install.log`.
+- `OpenClaw` has no form and uses `login-type: INFO`; its `setup` uses the official OpenClaw installer to install OpenClaw via npm and provision a supported Node.js runtime as needed, resolves the installed executable from `PATH`, and creates an `openclaw` user and a systemd service. `user-data.yaml` logs setup output to `/var/log/openclaw-install.log`.
 
 ## Public repo — keep internal details out
 
