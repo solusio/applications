@@ -4,26 +4,35 @@ set -euo pipefail
 
 LOG_TAG="[openclaw-setup]"
 log() { echo "${LOG_TAG} $*"; }
+fail() { echo "${LOG_TAG} ERROR: $*" >&2; exit 1; }
+trap 'echo "${LOG_TAG} ERROR: setup failed at line ${LINENO}; OpenClaw is NOT installed" >&2' ERR
 
-log "Installing Node.js 22.x..."
-curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-apt-get install -y nodejs
+# cloud-init runs runcmd without HOME set; the OpenClaw installer and npm require it.
+export HOME="${HOME:-/root}"
+
+log "Installing OpenClaw and its required Node.js runtime..."
+# The official installer picks and installs a Node release that the current
+# OpenClaw package supports, so that policy is maintained upstream.
+# Onboarding is skipped here and done below as the openclaw user.
+curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh \
+  | bash -s -- --install-method npm --no-prompt --no-onboard \
+  || fail "OpenClaw installation failed; see installer output above"
+
+OPENCLAW_BIN="$(command -v openclaw)" || fail "openclaw is not on PATH after installation"
+log "OpenClaw $("${OPENCLAW_BIN}" --version 2>/dev/null || echo '?') installed at ${OPENCLAW_BIN} (Node $(node -v))"
 
 log "Creating openclaw user..."
 useradd -m -s /bin/bash openclaw
 
-log "Installing OpenClaw..."
-npm install -g openclaw@latest
-
 log "Running OpenClaw onboard..."
-su - openclaw -c "openclaw onboard --non-interactive --accept-risk --mode local --flow quickstart --skip-health"
+su - openclaw -c "${OPENCLAW_BIN} onboard --non-interactive --accept-risk --mode local --flow quickstart --skip-health"
 
 log "Configuring TLS and LAN access..."
-su - openclaw -c "openclaw config set gateway.tls.enabled true"
-su - openclaw -c "openclaw config set gateway.controlUi.dangerouslyAllowHostHeaderOriginFallback true"
+su - openclaw -c "${OPENCLAW_BIN} config set gateway.tls.enabled true"
+su - openclaw -c "${OPENCLAW_BIN} config set gateway.controlUi.dangerouslyAllowHostHeaderOriginFallback true"
 
 log "Creating systemd service..."
-cat > /etc/systemd/system/openclaw.service <<'UNIT'
+cat > /etc/systemd/system/openclaw.service <<UNIT
 [Unit]
 Description=OpenClaw Gateway
 After=network.target
@@ -32,7 +41,7 @@ After=network.target
 Type=simple
 User=openclaw
 WorkingDirectory=/home/openclaw
-ExecStart=/usr/bin/openclaw gateway run --bind lan --port 18789
+ExecStart=${OPENCLAW_BIN} gateway run --bind lan --port 18789
 Restart=on-failure
 RestartSec=5
 Environment=NODE_ENV=production
@@ -48,5 +57,8 @@ mkdir -p /var/tmp/openclaw-compile-cache
 systemctl daemon-reload
 systemctl enable openclaw.service
 systemctl start openclaw.service
+
+sleep 5
+systemctl is-active --quiet openclaw.service || fail "openclaw.service is not running (see: journalctl -u openclaw.service)"
 
 log "OpenClaw installation complete."
