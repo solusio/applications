@@ -1,18 +1,17 @@
 {
     "applications-slug": "plesk",
-    "application-name": "Plesk",
-    "version": "18",
-    "os": "centOS7",
-    "imageURL": "http://images.prod.solus.io/solus-io-centos-plesk-18.0.24.qcow2",
+    "application-name": "Plesk on AlmaLinux",
+    "os": "AlmaLinux8",
+    "imageURL": "https://images.prod.solus.io/solus-io-almalinux-8-plesk.qcow2",
     "login-type": "JS",
     "login-link": "assets/login.js",
     "icon": "plesk",
-    "cloudinitversion": "v2",
+    "cloudinitversion": "v2-centos",
     "longDescription": "",
     "shortDescription": "",
     "supportLink": "",
     "costs": "0",
     "minCPU": "1",
-    "minMemoryMB": "512",
+    "minMemoryMB": "2048",
     "minSpaceGB": "20"
 }
